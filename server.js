@@ -15,6 +15,8 @@ const PORT = process.env.PORT;
 
 app.get('/books', getBookssHandler);
 app.delete('/deleteBook/:index', deleteBooksHandler);
+app.put('/updateBook/:index',updateBookHandler);
+
 
 
 
@@ -53,30 +55,7 @@ const UserSchema = new mongoose.Schema({
 const userModel = mongoose.model('books', UserSchema);
 // const booksModel1 = mongoose.model('booksII', BookSchema);
 
-function addBooksHandler(req, res) {
-    console.log(res.body);
 
-    const { bookName, bookDiscription, bookImageUrl, email} = req.body;
-
-    userModel.find({ email: email}, (error, userModel) => {
-        if (error) { res.send('Kindly provide correct data') }
-        else {
-            console.log('befor push', userModel[0])
-            userModel[0].books.push({
-                name: bookName,
-                discription: bookDiscription,
-                imge: bookImageUrl,
-            })
-            userModel[0].save();
-
-            res.send(userModel[0].books);
-
-        }
-
-
-    })
-
-}
 
 
 function seedBooksCollection() {
@@ -131,6 +110,8 @@ function seedBooksCollection() {
 
 }
 
+
+
 // seedBooksCollection();
 
 function deleteBooksHandler(req, res) {
@@ -151,6 +132,8 @@ function deleteBooksHandler(req, res) {
 }
 
 
+
+
 function getBookssHandler(req, res) {
     let userEmail = req.query.email;
     console.log(req.query.email);
@@ -164,6 +147,51 @@ function getBookssHandler(req, res) {
     })
 }
 
+function addBooksHandler(req, res) {
+    console.log(res.body);
+
+    const { bookName, bookDiscription, bookImageUrl, email} = req.body;
+
+    userModel.find({ email: email}, (error, userModel) => {
+        if (error) { res.send('Kindly provide correct data') }
+        else {
+            console.log('befor push', userModel[0])
+            userModel[0].books.push({
+                name: bookName,
+                discription: bookDiscription,
+                imge: bookImageUrl,
+            })
+            userModel[0].save();
+
+            res.send(userModel[0].books);
+
+        }
+
+
+    })
+
+}
+
+function updateBookHandler(req, res){
+
+    const { name, discription, imge, email} = req.body;
+    console.log(req.body);
+
+    const index = Number(req.params.index)
+
+    userModel.findOne({email:email}, (error, userModel)=>{
+        userModel.books.splice(index,1,{
+            name: name,
+            discription: discription,
+            imge: imge,
+
+        })
+
+        userModel.save();
+        res.send(userModel.books)
+        console.log(userModel);
+    })
+}
 
 
 
