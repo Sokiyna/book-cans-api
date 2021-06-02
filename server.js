@@ -5,8 +5,9 @@ const mongoose = require ('mongoose');
 
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+
+app.use(cors());
 app.post('/addBooks', addBooksHandler);
 
 const PORT = process.env.PORT;
@@ -37,7 +38,7 @@ app.listen(PORT, () => {
     console.log(`Listening on PORT ${PORT}`)
 })
 
-mongoose.connect('mongodb://localhost:27017/books', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 const BookSchema = new mongoose.Schema({
@@ -83,6 +84,8 @@ function seedBooksCollection() {
 
         ]
     })
+
+
     const hiba = new userModel({
         email: 'salemhiba.hs@gmail.com',
         books: [
